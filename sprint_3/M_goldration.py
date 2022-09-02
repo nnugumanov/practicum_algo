@@ -1,14 +1,3 @@
-"""
--- ПРИНЦИП РАБОТЫ --
-
--- ДОКАЗАТЕЛЬСТВО КОРРЕКТНОСТИ --
-
--- ВРЕМЕННАЯ СЛОЖНОСТЬ --
-
--- ПРОСТРАНСТВЕННАЯ СЛОЖНОСТЬ --
-
-"""
-
 from array import array
 
 def find_median_sorted_arrays(n: int, m: int, nums1: array, nums2: array) -> float:
@@ -31,11 +20,15 @@ def find_median_sorted_arrays(n: int, m: int, nums1: array, nums2: array) -> flo
         b_right = b[j + 1] if (j + 1) < m else 10001
 
         if a_left <= b_right and b_left <= a_right:
-
             if total % 2:
-                return min(a_right, b_right)
-
-            return (max(a_left, b_left) + min(a_right, b_right)) / 2
+                if a_right < b_right:
+                    return a_right
+                else:
+                    return b_right
+            else:
+                _max = a_left if a_left > b_left else b_left
+                _min = a_right if a_right < b_right else b_right
+                return (_min + _max) / 2
 
         elif a_left > b_right:
             right = i - 1
