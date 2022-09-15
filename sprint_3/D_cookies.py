@@ -1,13 +1,3 @@
-"""
--- ПРИНЦИП РАБОТЫ --
-
--- ДОКАЗАТЕЛЬСТВО КОРРЕКТНОСТИ --
-
--- ВРЕМЕННАЯ СЛОЖНОСТЬ --
-
--- ПРОСТРАНСТВЕННАЯ СЛОЖНОСТЬ --
-
-"""
 def count_satisfied(cookies, cookies_amount, greediness, child_amount):
     satisfied = 0
     cookies_index = 0

@@ -1,15 +1,3 @@
-"""
--- ПРИНЦИП РАБОТЫ --
-
--- ДОКАЗАТЕЛЬСТВО КОРРЕКТНОСТИ --
-
--- ВРЕМЕННАЯ СЛОЖНОСТЬ --
-
--- ПРОСТРАНСТВЕННАЯ СЛОЖНОСТЬ --
-
-"""
-
-
 def max_perimeter(pieces, amount):
     pieces.sort(reverse=True)
     for i in range(0, amount - 2):

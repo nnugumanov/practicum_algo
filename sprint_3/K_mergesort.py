@@ -1,14 +1,3 @@
-"""
--- ПРИНЦИП РАБОТЫ --
-
--- ДОКАЗАТЕЛЬСТВО КОРРЕКТНОСТИ --
-
--- ВРЕМЕННАЯ СЛОЖНОСТЬ --
-
--- ПРОСТРАНСТВЕННАЯ СЛОЖНОСТЬ --
-
-"""
-
 from array import array
 
 def merge(arr: array, left: int, mid: int, right: int) -> array:
