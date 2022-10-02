@@ -1,3 +1,56 @@
+# Посылка - 71423632
+
+# Советы шикарнейшие =) Нагенерил кучу данных, посмотрел в профайлере подсвеченные файлы - оказывается более трудоемким
+# был подсчет релевантностей текста, а не выборка топ 5 элементов с сортировкой.
+# Идея с кешированием была вообще вне поля рассматриваемых подходов, как-то даже не думал что это тут можно использовать =)
+# Спасибо большое!!!
+
+# в предыдущий раз ошибочно положил pclprof в архив
+
+
+"""
+-- ПРИНЦИП РАБОТЫ --
+    Для полученных документов строим индекс:
+        word: [ {document_number:count},..  ], где count - количество вхождений слова в документ.
+
+    Подсчет релевантности документов делаем так:
+        В словаре {document_number: relevance} будем хранить релевантность документов запросу.
+        Пробегаем по каждому слову в запросе.
+            Если оно не встречалось ранее - пропускаем.
+            Иначе - берем из индекса список документов для слова word и прибавляем для каждого документа количество вхождений:
+                document_relevance[document_number] += index[word][document_number]
+
+
+        Разреженный список weight2doc нужен был чтобы не сортировать весь document_relevance.
+        Если сделать как в https://contest.yandex.ru/contest/24414/run-report/71324078/, то я
+        перестаю укладываться в 8.5 секунд. Видимо я как-то не верно понял идею со словарем.
+
+        //одна из первых реализаций была со словарем в явном виде - https://contest.yandex.ru/contest/24414/run-report/71072690/
+        //и ее пришлось заменить на list фиксированного размера, чтобы уместиться в лимиты
+
+
+-- ДОКАЗАТЕЛЬСТВО КОРРЕКТНОСТИ --
+
+
+-- ВРЕМЕННАЯ СЛОЖНОСТЬ --
+
+    O(n) - затраты на построение индекса, где n - число документов/предложений (не будем учитывать длину текста)
+
+    Затраты на поиск документа:
+        O(m), где m - количество слов в документе
+
+    Итого: O(n+m).
+
+-- ПРОСТРАНСТВЕННАЯ СЛОЖНОСТЬ --
+    Затраты на индекс: n
+    Затраты на хранение релевантностей: n
+
+    Итого: O(n)
+
+
+"""
+from collections import Counter
+from functools import lru_cache
 
 class IndexedDocuments:
     """ self._index = {word: {document_number: word appearance count in document} }"""
@@ -6,46 +59,26 @@ class IndexedDocuments:
         self._index = {}
         for i in range(self._n):
             for word in documents[i].split():
-                document_number = i + 1
-                word_in_document_counts = self._index.setdefault(word, {})
-                self._index[word][document_number] = word_in_document_counts.get(document_number, 0) + 1
+                _ = self._index.setdefault(word, Counter())
+                self._index[word][i + 1] += 1
 
+    @lru_cache(maxsize=16384)
     def search_relevant_docs(self, line: str) -> [int]:
         # document_relevance = { document_number: sum(words count) }
-        document_relevance = {}
-
-        uniq_words = {}
-        for word in line.split():
-            if word in uniq_words:
-                continue
-            uniq_words[word] = 1
-
+        document_relevance = Counter()
+        for word in set(line.split()):
             if word in self._index:
                 for document_number, count in self._index[word].items():
-                    document_relevance[document_number] = document_relevance.get(document_number, 0) + count
+                    document_relevance[document_number] += count
 
-        # weight2doc = { relevance1 : [doc5, doc7...], relevance2: [doc1, doc2],..}
-        weight2doc = [ [] for _ in range(self._n + 1) ]
-        for document_number, relevance in document_relevance.items():
-            weight2doc[relevance] += [document_number]
+        top_five_docs = sorted(document_relevance.items(), key=lambda item: (-item[1], item[0]))[:5]
 
-        top_five_docs = []
-        for i in range(self._n, 0, -1):
-            if weight2doc[i]:
-                for doc in sorted(weight2doc[i]):
-                    if len(top_five_docs) < 5:
-                        top_five_docs.append(doc)
-                    else:
-                        return top_five_docs
-
-        return top_five_docs
+        return [item for item, _ in top_five_docs]
 
 
 def main():
     n = int(input())
-    docs = []
-    for _ in range(n):
-        docs.append(input())
+    docs = [input() for _ in range(n)]
 
     index_data = IndexedDocuments(n, docs)
 
@@ -53,78 +86,6 @@ def main():
     for _ in range(m):
         print(*index_data.search_relevant_docs(input()))
 
-def test():
-    docs = """i love coffee
-coffee with milk and sugar
-free tea for everyone"""
-
-    search_lines = """i like black coffee without milk
-everyone loves new year
-mary likes black coffee without milk""".split("\n")
-
-    index_data = IndexedDocuments(3, docs.split("\n"))
-
-    assert (index_data.search_relevant_docs(search_lines[0]) == [1, 2])
-    assert (index_data.search_relevant_docs(search_lines[1]) == [3])
-    assert (index_data.search_relevant_docs(search_lines[2]) == [2, 1])
-
-    docs = """buy flat in moscow
-rent flat in moscow
-sell flat in moscow
-want flat in moscow like crazy
-clean flat in moscow on weekends
-renovate flat in moscow"""
-
-    search_lines = "flat in moscow for crazy weekends"
-
-    index_data = IndexedDocuments(6, docs.split("\n"))
-    assert(index_data.search_relevant_docs(search_lines) == [4, 5, 1, 2, 3])
-
-    docs = """i like dfs and bfs
-i like dfs dfs
-i like bfs with bfs and bfs"""
-
-    search_lines = """dfs dfs dfs dfs bfs"""
-
-    index_data = IndexedDocuments(3, docs.split("\n"))
-    result = index_data.search_relevant_docs(search_lines)
-    assert (result == [3, 1, 2])
-
-    docs = """tjegerxbyk pdvmj wulmqfrx
-pndygsm dvjihmxr tcdtqsmfe
-txamzxqzeq dxkxwq aua
-hsciljsrdo fipazun kngi
-xtkomk aua wulmqfrx ydkbncmzee
-pndygsm cqvffye pyrhcxbcef
-szyc uffqhayg ccktodig
-ntr wpvlifrgjg htywpe
-kngi tjegerxbyk zsnfd
-tqilkkd gq qc fipazun"""
-
-    search_lines = """dxkxwq htywpe
-aua tjegerxbyk
-xtkomk tjegerxbyk
-szyc fipazun
-xtkomk tjegerxbyk""".split("\n")
-
-    index_data = IndexedDocuments(10, docs.split("\n"))
-    result = index_data.search_relevant_docs(search_lines[0])
-    assert (result == [3, 8])
-
-    result = index_data.search_relevant_docs(search_lines[1])
-    assert (result == [1, 3, 5, 9])
-
-    result = index_data.search_relevant_docs(search_lines[2])
-    assert (result == [1, 5, 9])
-
-    result = index_data.search_relevant_docs(search_lines[3])
-    assert (result == [4, 7, 10])
-
-    result = index_data.search_relevant_docs(search_lines[4])
-    assert (result == [1, 5, 9])
-
 
 if __name__ == "__main__":
-    # main()
-
-    test()
+    main()
