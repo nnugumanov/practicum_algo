@@ -16,5 +16,6 @@ def main():
                 return "NO"
     return "YES"
 
+
 if __name__ == "__main__":
     print(main())
