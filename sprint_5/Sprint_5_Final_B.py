@@ -27,7 +27,7 @@ if LOCAL:
             self.value = value
 
 
-def findNode(root: Node, key: int, parent=None) -> (Union[Node,None], Union[Node,None]):
+def find_node(root: Node, key: int, parent=None) -> (Union[Node, None], Union[Node, None]):
     """
     Find node by key and it's parent node
     :param root:
@@ -43,12 +43,12 @@ def findNode(root: Node, key: int, parent=None) -> (Union[Node,None], Union[Node
         return parent, root
 
     elif root.value > key:
-        return findNode(root.left, key, root)
+        return find_node(root.left, key, root)
     else:
-        return findNode(root.right, key, root)
+        return find_node(root.right, key, root)
 
 
-def findReplacement(root: Node, parent: Node) -> Node:
+def find_replacement(root: Node, parent: Node) -> Node:
     """
     Find most right node in tree
 
@@ -80,7 +80,7 @@ def findReplacement(root: Node, parent: Node) -> Node:
 
 def remove(root: Node, key: int) -> Node:
 
-    parent, toremove_node = findNode(root, key)
+    parent, toremove_node = find_node(root, key)
     if toremove_node is None:
         return root
 
