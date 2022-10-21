@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Union
 
+
 LOCAL = False
 
 if LOCAL:
