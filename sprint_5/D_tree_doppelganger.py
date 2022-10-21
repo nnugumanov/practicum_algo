@@ -14,6 +14,7 @@ if LOCAL:
             self.right = right
             self.left = left
 
+
 def is_identical_trees(root_A: Union[Node, None], root_B: Union[Node, None]) -> bool:
 
     if root_A is None and root_B is None:
