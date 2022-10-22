@@ -1,4 +1,4 @@
-# посылка 72684722
+# посылка 72772792
 
 """
 -- ПРИНЦИП РАБОТЫ --
@@ -38,10 +38,10 @@
 -- ДОКАЗАТЕЛЬСТВО КОРРЕКТНОСТИ --
 
 -- ВРЕМЕННАЯ СЛОЖНОСТЬ --
-   O(n). Затраты: на поиск узла + поиск в одном из поддеревьев узла кандидата на замену
+   O(n) где n - количество узлов дерева. Затраты: на поиск узла + поиск в одном из поддеревьев узла кандидата на замену
 
 -- ПРОСТРАНСТВЕННАЯ СЛОЖНОСТЬ --
-    O(n) Память нужна только на саму структуру дерева, которая линейно растет с ростом количества элементов в дереве.
+    O(1), т.к нужно фиксированное количество переменных.
 """
 
 
@@ -49,9 +49,9 @@
 # set LOCAL to True for local testing
 from __future__ import annotations
 
-from typing import Union
+from typing import Optional
 
-LOCAL = True
+LOCAL = False
 if LOCAL:
     class Node:
         def __init__(self, left=None, right=None, value=0):
@@ -60,7 +60,7 @@ if LOCAL:
             self.value = value
 
 
-def find_node(root: Node, key: int, parent=None) -> (Union[Node, None], Union[Node, None]):
+def find_node(root: Node, key: int, parent=None) -> (Optional[Node], Optional[Node]):
     """
     Find node by key. Return parent node and node itself.
     :param root:
@@ -81,38 +81,14 @@ def find_node(root: Node, key: int, parent=None) -> (Union[Node, None], Union[No
         return find_node(root.right, key, root)
 
 
-def find_replacement(root: Node, parent: Node) -> Node:
-    """
-    Find most right node in tree
-
-    :param root:
-    :return:
-    """
-
-    local_parent = parent
-    replacement = root
-    while replacement.right is not None:
-        local_parent = replacement
-        replacement = replacement.right
-
-    if replacement.right is None and replacement.left is None:
-        if local_parent is not None:
-            local_parent.right = None
-        return replacement
-
-    if replacement.left is not None:
-        if local_parent.right is not None:
-            local_parent.right = replacement.left
-        replacement.left = None
-        return replacement
+def replace_child_node(parent: Node, to_replace_node: Node, replacement: Optional[Node]):
+    if parent.left == to_replace_node:
+        parent.left = replacement
+    elif parent.right == to_replace_node:
+        parent.right = replacement
 
 
-def remove(root: Node, key: int) -> Union[Node, None]:
-    def add_to_parent(parent: Node, toremove_node: Node, replacement: Node):
-        if parent.left == toremove_node:
-            parent.left = replacement
-        elif parent.right == toremove_node:
-            parent.right = replacement
+def remove(root: Node, key: int) -> Optional[Node]:
 
     parent, toremove_node = find_node(root, key)
     if toremove_node is None:
@@ -122,7 +98,7 @@ def remove(root: Node, key: int) -> Union[Node, None]:
     if toremove_node.left is None and toremove_node.right is None:
         if parent is None:
             return None
-        add_to_parent(parent, toremove_node, None)
+        replace_child_node(parent, toremove_node, None)
         return root
 
     local_parent = toremove_node
@@ -154,7 +130,7 @@ def remove(root: Node, key: int) -> Union[Node, None]:
         # подтянуть детей узла "на замену"
         if replacement_subtree == 'left':
             local_parent.right = replacement.left
-        if replacement_subtree == 'right':
+        elif replacement_subtree == 'right':
             local_parent.left = replacement.right
 
         replacement.left = toremove_node.left
@@ -163,7 +139,7 @@ def remove(root: Node, key: int) -> Union[Node, None]:
     if parent is None:
         return replacement
     else:
-        add_to_parent(parent, toremove_node, replacement)
+        replace_child_node(parent, toremove_node, replacement)
         return root
 
 

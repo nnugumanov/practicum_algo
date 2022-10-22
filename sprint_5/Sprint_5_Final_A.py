@@ -1,4 +1,4 @@
-# посылка 72687317
+# посылка 72773006
 
 """
 -- ПРИНЦИП РАБОТЫ --
@@ -33,7 +33,7 @@
 -- ДОКАЗАТЕЛЬСТВО КОРРЕКТНОСТИ --
 
 -- ВРЕМЕННАЯ СЛОЖНОСТЬ --
-  O(2n log n) - нам нужно 2 раза для n элементов пройтись log n раз по списку.
+  O(n log n) - нам нужно 2 раза для n элементов пройтись log n раз по списку.
 
 -- ПРОСТРАНСТВЕННАЯ СЛОЖНОСТЬ --
   O(n), т.к нам хватило одного массива на n элементов.
@@ -83,8 +83,7 @@ class Heapsort:
             self._unsorted_heap_size -= 1
             self._sift_down(1)
 
-        res = [x.name for x in self._heap[1:]]
-        return res
+        return [x.name for x in self._heap[1:]]
 
     def _sift_down(self, index: int):
         left = 2 * index
