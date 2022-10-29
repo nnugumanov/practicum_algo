@@ -48,6 +48,7 @@ def DFS(s: int, vertices: [[int]]) -> [int]:
         u = stack.pop()
         if not is_sorted[u]:
             vertices[u].sort(reverse=True)
+            is_sorted[u] = True
 
         if color[u] == Color.WHITE:
             color[u] = Color.GREY
@@ -73,9 +74,7 @@ def main():
         vertices[v].append(u)
 
     s = int(input())
-    res = DFS(s, vertices)
-
-    print(*res)
+    print(DFS(s, vertices))
 
 if __name__ == "__main__":
     main()

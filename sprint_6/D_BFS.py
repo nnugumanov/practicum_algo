@@ -25,6 +25,7 @@ def BFS(vertices: [[int]], s: int) -> [int]:
             res.append(u)
             if not is_sorted[u]:
                 vertices[u].sort()
+                is_sorted[u] = True
 
             for v in vertices[u]:
                 if color[v] == Color.WHITE:
@@ -42,8 +43,7 @@ def main():
         vertices[v].append(u)
     s = int(input())
 
-    res = BFS(vertices, s)
-    print(*res)
+    print(BFS(vertices, s))
 
 if __name__ == "__main__":
     main()
