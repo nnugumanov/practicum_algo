@@ -45,20 +45,20 @@ def DFS(s: int, vertices: [[int]]) -> [int]:
     res = []
 
     while len(stack) > 0:
-        v = stack.pop()
-        if not is_sorted[v]:
-            vertices[v].sort(reverse=True)
+        u = stack.pop()
+        if not is_sorted[u]:
+            vertices[u].sort(reverse=True)
 
-        if color[v] == Color.WHITE:
-            color[v] = Color.GREY
-            res.append(v)
-            stack.append(v)
-            for item in vertices[v]:
-                if color[item] == Color.WHITE:
-                    stack.append(item)
+        if color[u] == Color.WHITE:
+            color[u] = Color.GREY
+            res.append(u)
+            stack.append(u)
+            for v in vertices[u]:
+                if color[v] == Color.WHITE:
+                    stack.append(v)
 
-        elif color[v] == Color.GREY:
-            color[v] = Color.BLACK
+        elif color[u] == Color.GREY:
+            color[u] = Color.BLACK
     return res
 
 
