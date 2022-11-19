@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 import copy
 
+
 # Посылка - 73943813
 """
 -- ПРИНЦИП РАБОТЫ --
@@ -47,10 +48,10 @@ import copy
  O(E) для хранения кучи
  O(2V) для хранения списков добавленных и недобавленных вершин.
  -----
- O(3V+2E)  (наверное можно сказать что это ~= O(V+E) )
+ 
+ Итого O(V+E)
  
 """
-
 
 
 @dataclass
