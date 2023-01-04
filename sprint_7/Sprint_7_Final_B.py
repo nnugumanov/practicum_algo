@@ -1,13 +1,45 @@
 from __future__ import annotations
+# посылка 78663028
 """
 -- ПРИНЦИП РАБОТЫ --
+    1. если сумма - нечетное число, возвращаем False
+    2. В цикле просматриваем все числа из списка:
+       В aggregated_sums копим возможные варианты сумм из имеющихся чисел. 
+       
+        Для каждой суммы из aggregated sum проводим операцию: 
+            - если сумма (a) или сумма + текущее рассматриваемое число (b) дают искомую полусумму - выходим с ответом True
+            - сохраняем в current_sum (a) и (b).
+        После прохода по aggregated_sum, сохраняем в aggregated_sum список из current_sum. 
+        Таким образом на i-ом числе из списка мы оперируем всеми возможными вариантами сумм возможными для (0..i) чисел
+         из списка 
+    3. Если все числа обработали, возвращаем False.
+
 
 -- ДОКАЗАТЕЛЬСТВО КОРРЕКТНОСТИ --
-
+    На первом шаге, в aggegated_sum храним 0. Затем для 1го числа из списка (numbers[0]), в aggregated_sum сохраняем 
+    все возможные комбинации которые можем получить: (0, numbers[0]). 
+    Для 2го числа получим список (0, numbers[0], numbers[1], numbers[0] + numbers[1]).
+    На i-м шаге получаем список (числа из aggregated_sum от шага i-1, + все эти же числа увеличенные на numbers[i]).
+    При завершении просмотра numbers, в aggregated_sum имеем все возможные комбинации сумм, что означает что программа 
+    обязана либо наткнутся на искомую полусумму либо вернуть ответ что такую полусумму набрать невозможно.
+    
 -- ВРЕМЕННАЯ СЛОЖНОСТЬ --
-
+    В худшем случае все числа в списке уникальны, это максимизирует количество различных сумм. 
+    Т.е рассмотрим случай когда в списке для N чисел имеем последовательность от 1 до N. 
+    Тогда (расписывал варианты) получается что количество рассматриваемых сумм описывается как 
+        sum[ (i + 1) * i/2 ] ) где i принадлежит от 0 до N
+    
+    O( sum[ (i + 1) * i/2 ] ) где i принадлежит от 0 до N) ~= O(n^2)
+    Итого O(n^2) для наихудшего случая.
+     
 -- ПРОСТРАНСТВЕННАЯ СЛОЖНОСТЬ --
 
+    Нужно хранить 
+     (n + 1) * n/2 )  элементов в aggegated_sum
+     (n + 1 + 1) * (n + 1)/2 элементов для current_sums
+     суммарно это (n + 1)^2
+     
+     Итого O(n^2)
 """
 
 
@@ -17,26 +49,22 @@ def is_partitiable(numbers: [int]) -> bool:
         return False
 
     halfsum = int(summa / 2)
-    D = [[False for i in range(halfsum + 1)] for j in range(2)]
-
-    for i in range(2):
-        D[i][0] = True
-
-    for i in range(1, len(numbers) + 1):
-        for j in range(1, halfsum + 1):
-            if j < numbers[i - 1]:
-                D[i % 2][j] = D[(i - 1) % 2][j]
-            if j >= numbers[(i - 1) % 2]:
-                D[i % 2][j] = (D[(i - 1) % 2][j] or
-                                D[(i - 1) % 2][j - numbers[i - 1]])
-
-    return D[len(numbers) % 2][halfsum]
+    aggregated_sums = set()
+    aggregated_sums.add(0)
+    for num in numbers:
+        current_sums = set()
+        for item in aggregated_sums:
+            if (item == halfsum) or (item + num == halfsum):
+                return True
+            current_sums.add(item)
+            current_sums.add(item + num)
+        aggregated_sums = current_sums
+    return False
 
 def main():
     n = int(input())
     numbers = [int(x) for x in input().split()]
     print(is_partitiable(numbers))
-
 
 if __name__ == "__main__":
     main()
