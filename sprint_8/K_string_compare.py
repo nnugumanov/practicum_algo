@@ -8,6 +8,7 @@ from __future__ import annotations
 и не превосходят 105 символов в длину.
 """
 
+
 def filter_string_end(s: str):
     for lt in s:
         if (ord(lt) - ord("a")) % 2 == 0:
@@ -15,6 +16,7 @@ def filter_string_end(s: str):
         else:
             return lt
     return ""
+
 
 def cmp(s1: str, s2: str) -> int:
 
