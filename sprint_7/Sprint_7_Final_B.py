@@ -7,7 +7,8 @@ from __future__ import annotations
        В aggregated_sums копим возможные варианты сумм из имеющихся чисел. 
        
         Для каждой суммы из aggregated sum проводим операцию: 
-            - если сумма (a) или сумма + текущее рассматриваемое число (b) дают искомую полусумму - выходим с ответом True
+            - если сумма (a) или сумма + текущее рассматриваемое число (b) дают искомую полусумму - выходим с ответом 
+            True
             - сохраняем в current_sum (a) и (b).
         После прохода по aggregated_sum, сохраняем в aggregated_sum список из current_sum. 
         Таким образом на i-ом числе из списка мы оперируем всеми возможными вариантами сумм возможными для (0..i) чисел
@@ -61,10 +62,12 @@ def is_partitiable(numbers: [int]) -> bool:
         aggregated_sums = current_sums
     return False
 
+
 def main():
-    n = int(input())
+    _ = int(input())
     numbers = [int(x) for x in input().split()]
     print(is_partitiable(numbers))
+
 
 if __name__ == "__main__":
     main()

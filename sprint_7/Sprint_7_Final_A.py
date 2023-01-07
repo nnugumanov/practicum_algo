@@ -36,7 +36,7 @@
 def main():
     s = input()
     t = input()
-    D = [[0 for i in range(len(t) + 1)] for j in range(len(s) + 1)]
+    D = [[0 for _ in range(len(t) + 1)] for _ in range(len(s) + 1)]
 
     for i in range(len(s) + 1):
         D[i][0] = i
@@ -54,6 +54,7 @@ def main():
                 D[i][j] = min(_ins, _del, _rep)
 
     print(D[len(s)][len(t)])
+
 
 if __name__ == "__main__":
     main()
